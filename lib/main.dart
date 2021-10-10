@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Be Marvellous | Admin Panel',
         theme: ThemeData(
           fontFamily: 'Product-Sans',
           primarySwatch: Colors.red,
