@@ -82,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Container(
                                     padding: EdgeInsets.all(20.0),
                                     child: TextFormField(
+                                      obscureText: true,
                                       style: TextStyle(color: Colors.red),
                                       decoration: InputDecoration(
                                           hintText: "Password",
