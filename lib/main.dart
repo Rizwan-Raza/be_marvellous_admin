@@ -1,5 +1,6 @@
 import 'package:be_marvellous_admin/screens/dashboard.dart';
 import 'package:be_marvellous_admin/screens/login.dart';
+import 'package:be_marvellous_admin/screens/settings.dart';
 import 'package:be_marvellous_admin/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
               : LoginScreen(),
           "/dashboard": (context) => Provider.of<Login>(context).isLogin
               ? DashboardScreen()
+              : LoginScreen(),
+          "/settings": (context) => Provider.of<Login>(context).isLogin
+              ? SettingsScreen()
               : LoginScreen(),
         },
       ),
