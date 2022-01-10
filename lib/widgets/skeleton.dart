@@ -29,10 +29,19 @@ class Skeleton extends StatelessWidget {
               ),
             ),
             ListTile(
+              title: Text('Dashboard'),
+              leading: Icon(Icons.dashboard),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/dashboard");
+              },
+            ),
+            ListTile(
               title: Text('Watch List'),
               leading: Icon(Icons.toc),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, "/watchlist");
               },
             ),
             ListTile(

@@ -176,67 +176,69 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(32),
-                        color: Colors.red[100],
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              "ic_launcher-web.png",
-                              height: 120,
-                            ),
-                            SizedBox(height: 32),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Text(
-                                "Be Marvellous",
+                    if (constraints.maxWidth > 640)
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(32),
+                          color: Colors.red[100],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                "img/ic_launcher-web.png",
+                                height: 120,
+                              ),
+                              SizedBox(height: 32),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                child: Text(
+                                  "Be Marvellous",
+                                  style: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Text(
+                                "Admin Panel",
                                 style: TextStyle(
-                                    fontSize: 32, fontWeight: FontWeight.bold),
+                                  color: Colors.red[300],
+                                  fontSize: 24,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Admin Panel",
-                              style: TextStyle(
-                                color: Colors.red[300],
-                                fontSize: 24,
+                              SizedBox(
+                                height: 32,
                               ),
-                            ),
-                            SizedBox(
-                              height: 32,
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text("More info"),
-                                          content: Text(
-                                            "This panel is specifically for admins, if you are not an admin then please close it and use the app instead. \nIf you are interested to enroll yourself as an admin for Be Marvellous. \nContact RexTerminous for it.",
-                                          ),
-                                        );
-                                      });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.info),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      Text("Show more"),
-                                    ],
-                                  ),
-                                )),
-                          ],
+                              ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text("More info"),
+                                            content: Text(
+                                              "This panel is specifically for admins, if you are not an admin then please close it and use the app instead. \nIf you are interested to enroll yourself as an admin for Be Marvellous. \nContact RexTerminous for it.",
+                                            ),
+                                          );
+                                        });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.info),
+                                        SizedBox(
+                                          width: 8.0,
+                                        ),
+                                        Text("Show more"),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
+                      )
                   ],
                 ),
               ),

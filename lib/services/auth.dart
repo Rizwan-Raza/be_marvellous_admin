@@ -1,11 +1,13 @@
+import 'package:be_marvellous_admin/screens/login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login {
-  bool isLogin = false;
+  bool _isLogin = false;
   late SharedPreferences prefs;
   init() async {
     prefs = await SharedPreferences.getInstance();
-    isLogin = prefs.getBool("isLogin") ?? false;
+    _isLogin = prefs.getBool("isLogin") ?? false;
   }
 
   Login() {
@@ -14,17 +16,30 @@ class Login {
 
   bool login(String username, String password) {
     if (username == "admin" && password == "bsdk") {
-      isLogin = true;
+      _isLogin = true;
       prefs.setBool("isLogin", true);
     } else {
-      isLogin = false;
+      _isLogin = false;
       prefs.setBool("isLogin", false);
     }
-    return isLogin;
+    return _isLogin;
   }
 
   void logout() {
-    isLogin = false;
+    _isLogin = false;
     prefs.setBool("isLogin", false);
+  }
+
+  get isLogin async {
+    _isLogin = prefs.getBool("isLogin") ?? false;
+    return _isLogin;
+  }
+
+  Widget getScreen(Widget screen) {
+    if (_isLogin) {
+      return screen;
+    } else {
+      return LoginScreen();
+    }
   }
 }
