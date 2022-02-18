@@ -3,6 +3,7 @@ import 'package:be_marvellous_admin/screens/login.dart';
 import 'package:be_marvellous_admin/screens/settings.dart';
 import 'package:be_marvellous_admin/screens/watchlist.dart';
 import 'package:be_marvellous_admin/services/auth.dart';
+import 'package:be_marvellous_admin/services/settings_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +21,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<Login>(
-          create: (_) => login,
-        ),
+        Provider<Login>(create: (_) => login),
+        Provider<SettingServices>(create: (_) => SettingServices()),
       ],
       child: FutureBuilder(
           future: login.isLogin,

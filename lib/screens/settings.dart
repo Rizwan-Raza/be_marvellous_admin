@@ -1,6 +1,10 @@
+import 'package:be_marvellous_admin/models/general.dart';
+import 'package:be_marvellous_admin/models/watchlist.dart';
+import 'package:be_marvellous_admin/services/settings_service.dart';
 import 'package:be_marvellous_admin/widgets/skeleton.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:be_marvellous_admin/widgets/text-form-field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -11,182 +15,136 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
+  late GeneralSettings _generalSettings;
+  late WatchListSettings _watchListSettings;
+
+  @override
+  void initState() {
+    super.initState();
+    _generalSettings =
+        Provider.of<SettingServices>(context, listen: false).generalSettings;
+    _watchListSettings =
+        Provider.of<SettingServices>(context, listen: false).watchListSettings;
+  }
+
+  bool loading = true;
+  bool saving = false;
 
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
     return Skeleton(
-      child: Column(
-        children: [
-          Center(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('settings')
-                          .doc('hostname')
-                          .get(),
-                      builder:
-                          (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          Map<String, dynamic> data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          return Container(
-                            padding: EdgeInsets.all(20.0),
-                            child: TextFormField(
-                              initialValue: "${data['hostname']}",
-                              keyboardType: TextInputType.url,
-                              style: TextStyle(color: Colors.red),
-                              decoration: InputDecoration(
-                                  labelText: 'Hostname',
-                                  hintText: "Hostname",
-                                  icon: Icon(Icons.domain)),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter scrap hostname';
+      child: loading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    getTextFormField(
+                      "Hostname",
+                      Icons.domain,
+                      TextInputType.url,
+                      "Please enter scrap hostname",
+                      "hostname",
+                      _generalSettings.hostname,
+                    ),
+                    getTextFormField(
+                      "Watchlist Link",
+                      Icons.link,
+                      TextInputType.url,
+                      "Please enter watchlistLink",
+                      "watchlistLink",
+                      _watchListSettings.watchListLink,
+                    ),
+                    getTextFormField(
+                        "No of Pages",
+                        Icons.auto_stories,
+                        TextInputType.number,
+                        "Please enter no of pages",
+                        "pages",
+                        _watchListSettings.pages.toString()),
+                    getTextFormField(
+                        "Limit",
+                        Icons.format_list_numbered,
+                        TextInputType.number,
+                        "Please enter the limit",
+                        "limit",
+                        _watchListSettings.limit.toString()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                } else {
+                                  return;
                                 }
-                                return null;
                               },
-                              onSaved: (value) {
-                                setState(() {
-                                  loading = true;
-                                });
-                                firestore
-                                    .collection('settings')
-                                    .doc('hostname')
-                                    .set({
-                                  'hostname': value,
-                                }).then((value) => {
-                                          ScaffoldMessenger.of(context)
-                                              .showMaterialBanner(
-                                                  MaterialBanner(
-                                            backgroundColor: Colors.yellow[100],
-                                            actions: [
-                                              TextButton(
-                                                child: Text('OK'),
-                                                onPressed: () {
-                                                  ScaffoldMessenger.of(context)
-                                                      .hideCurrentMaterialBanner();
-                                                },
-                                              )
-                                            ],
-                                            content: Text('Changes saved'),
-                                          )),
-                                          setState(() {
-                                            loading = false;
-                                          }),
-                                          Future.delayed(
-                                              const Duration(seconds: 5),
-                                              ScaffoldMessenger.of(context)
-                                                  .clearMaterialBanners)
-                                        });
-                              },
-                            ),
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
-                  FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('settings')
-                          .doc('watchlistLink')
-                          .get(),
-                      builder:
-                          (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          Map<String, dynamic> data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          return Container(
-                            padding: EdgeInsets.all(20.0),
-                            child: TextFormField(
-                              initialValue: "${data['watchlistLink']}",
-                              keyboardType: TextInputType.url,
-                              style: TextStyle(color: Colors.red),
-                              decoration: InputDecoration(
-                                  labelText: 'Watchlist Link',
-                                  hintText: "Watchlist Link",
-                                  icon: Icon(Icons.link)),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter watchlistLink';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                setState(() {
-                                  loading = true;
-                                });
-                                firestore
-                                    .collection('settings')
-                                    .doc('watchlistLink')
-                                    .set({
-                                  'watchlistLink': value,
-                                }).then((value) => {
-                                          ScaffoldMessenger.of(context)
-                                              .showMaterialBanner(
-                                                  MaterialBanner(
-                                            backgroundColor: Colors.yellow[100],
-                                            actions: [
-                                              TextButton(
-                                                child: Text('OK'),
-                                                onPressed: () {
-                                                  ScaffoldMessenger.of(context)
-                                                      .hideCurrentMaterialBanner();
-                                                },
-                                              )
-                                            ],
-                                            content: Text('Changes saved'),
-                                          )),
-                                          setState(() {
-                                            loading = false;
-                                          }),
-                                          Future.delayed(
-                                              const Duration(seconds: 5),
-                                              ScaffoldMessenger.of(context)
-                                                  .clearMaterialBanners)
-                                        });
-                              },
-                            ),
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                          } else {
-                            return;
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            loading ? "Saving ..." : "Save",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20.0),
-                          ),
-                        )),
-                  )
-                ],
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  saving ? "Saving ..." : "Save",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20.0),
+                                ),
+                              )),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+    );
+  }
+
+  Widget getTextFormField(
+      String label,
+      IconData icon,
+      TextInputType keyboardType,
+      String errorText,
+      String fKey,
+      String initialValue) {
+    return CustomTextFormField(
+      initialValue: initialValue,
+      keyboardType: keyboardType,
+      label: label,
+      icon: icon,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return errorText;
+        }
+        return null;
+      },
+      onSaved: (value) {
+        setState(() {
+          saving = true;
+        });
+        _settingServices.setSetting(fKey, value!).then((value) => {
+              ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+                backgroundColor: Colors.yellow[100],
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                    },
+                  )
+                ],
+                content: Text('Changes saved'),
+              )),
+              setState(() {
+                saving = false;
+              }),
+              Future.delayed(const Duration(seconds: 5),
+                  ScaffoldMessenger.of(context).clearMaterialBanners)
+            });
+      },
     );
   }
 }
